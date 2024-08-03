@@ -7,6 +7,7 @@ import com.poly.salestshirt.entity.ProductDetail;
 import com.poly.salestshirt.dto.request.ProductDetailRequest;
 import com.poly.salestshirt.dto.response.common.PageResponse;
 import com.poly.salestshirt.dto.response.ProductDetailResponse;
+import com.poly.salestshirt.mapper.ProductDetailMapper;
 import com.poly.salestshirt.repository.SizeRepository;
 import com.poly.salestshirt.repository.ColorRepository;
 import com.poly.salestshirt.repository.ProductDetailRepository;
@@ -32,6 +33,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     private final ProductRepository productRepository;
     private final SizeRepository sizeRepository;
     private final ColorRepository colorRepository;
+    private final ProductDetailMapper productDetailMapper;
 
     @Override
     public PageResponse<?> getAllByProductId(int pageNo, int pageSize, int productId) {
@@ -42,20 +44,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         Page<ProductDetail> productDetailPage = productDetailRepository.findAllByProductId(pageable, productId);
 
         List<ProductDetailResponse> productDetailList = productDetailPage.stream()
-                .map(productDetail -> ProductDetailResponse.builder()
-                        .id(productDetail.getId())
-                        .code(productDetail.getCode())
-                        .productId(productDetail.getProduct().getId())
-                        .productName(productDetail.getProduct().getName())
-                        .sizeId(productDetail.getSize() != null ? productDetail.getSize().getId() : null)
-                        .sizeName(productDetail.getSize() != null ? productDetail.getSize().getName() : null)
-                        .colorId(productDetail.getColor() != null ? productDetail.getColor().getId() : null)
-                        .colorName(productDetail.getColor() != null ? productDetail.getColor().getName() : null)
-                        .quantity(productDetail.getQuantity())
-                        .price(productDetail.getPrice())
-                        .status(productDetail.getStatus())
-                        .build())
-                .toList();
+                .map(productDetailMapper::toProductDetailResponse).toList();
 
         return PageResponse.builder()
                 .pageNo(pageNo)
@@ -69,7 +58,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public String create(ProductDetailRequest request) {
-        ProductDetail productDetail = new ProductDetail();
+        ProductDetail productDetail = productDetailMapper.toCreateProductDetail(request);
 
         Optional<Product> productOptional = productRepository.findById(request.getProductId());
         if (productOptional.isEmpty()) return "Không tìm thấy sản phẩm.";
@@ -86,20 +75,18 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             if (colorOptional.isEmpty()) return "Không tìm thấy màu sắc.";
         }
 
-        productDetail.setCode(request.getCode());
         productDetail.setProduct(productOptional.get());
         productDetail.setSize(sizeOptional.orElse(null));
         productDetail.setColor(colorOptional.orElse(null));
-        productDetail.setQuantity(request.getQuantity());
-        productDetail.setPrice(request.getPrice());
-        productDetail.setStatus(1);
         productDetailRepository.save(productDetail);
+        log.info("Product detail added successfully");
         return "Thêm sản phẩm chi tiết thành công.";
     }
 
     @Override
     public String update(int productDetailId, ProductDetailRequest request) {
-        ProductDetail productDetail = new ProductDetail();
+        ProductDetail productDetail = getProductDetailById(productDetailId);
+        if (productDetail == null) return "Không tìm thấy sản phẩm chi tiết";
 
         Optional<Product> productOptional = productRepository.findById(request.getProductId());
         if (productOptional.isEmpty()) return "Không tìm thấy sản phẩm.";
@@ -116,14 +103,10 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             if (colorOptional.isEmpty()) return "Không tìm thấy màu sắc.";
         }
 
-        productDetail.setId(productDetailId);
-        productDetail.setCode(request.getCode());
+        productDetailMapper.toUpdateProductDetail(productDetail, request);
         productDetail.setProduct(productOptional.get());
         productDetail.setSize(sizeOptional.orElse(null));
         productDetail.setColor(colorOptional.orElse(null));
-        productDetail.setQuantity(request.getQuantity());
-        productDetail.setPrice(request.getPrice());
-        productDetail.setStatus(request.getStatus());
         productDetailRepository.save(productDetail);
         return "Sửa sản phẩm chi tiết thành công.";
     }
@@ -143,38 +126,13 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     public ProductDetailResponse getProductDetailResponse(int id) {
         ProductDetail productDetail = getProductDetailById(id);
         if (productDetail == null) return null;
-        return ProductDetailResponse.builder()
-                .id(productDetail.getId())
-                .code(productDetail.getCode())
-                .productId(productDetail.getProduct().getId())
-                .productName(productDetail.getProduct().getName())
-                .sizeId(productDetail.getSize() != null ? productDetail.getSize().getId() : null)
-                .sizeName(productDetail.getSize() != null ? productDetail.getSize().getName() : null)
-                .colorId(productDetail.getColor() != null ? productDetail.getColor().getId() : null)
-                .colorName(productDetail.getColor() != null ? productDetail.getColor().getName() : null)
-                .quantity(productDetail.getQuantity())
-                .price(productDetail.getPrice())
-                .status(productDetail.getStatus())
-                .build();
+        return productDetailMapper.toProductDetailResponse(productDetail);
     }
 
     @Override
     public List<ProductDetailResponse> getAllByProductIdAndStatus(int productId, int status) {
         return productDetailRepository.findAllByProductIdAndStatus(productId, status).stream()
-                .map(productDetail -> ProductDetailResponse.builder()
-                        .id(productDetail.getId())
-                        .code(productDetail.getCode())
-                        .productId(productDetail.getProduct().getId())
-                        .productName(productDetail.getProduct().getName())
-                        .sizeId(productDetail.getSize() != null ? productDetail.getSize().getId() : null)
-                        .sizeName(productDetail.getSize() != null ? productDetail.getSize().getName() : null)
-                        .colorId(productDetail.getColor() != null ? productDetail.getColor().getId() : null)
-                        .colorName(productDetail.getColor() != null ? productDetail.getColor().getName() : null)
-                        .quantity(productDetail.getQuantity())
-                        .price(productDetail.getPrice())
-                        .status(productDetail.getStatus())
-                        .build())
-                .collect(Collectors.toList());
+                .map(productDetailMapper::toProductDetailResponse).toList();
     }
 
     public ProductDetail getProductDetailById(int id) {

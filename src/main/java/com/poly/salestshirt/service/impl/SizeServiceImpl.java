@@ -49,8 +49,7 @@ public class SizeServiceImpl implements SizeService {
 
     @Override
     public String create(SizeRequest request) {
-        Size size = modelMapper.map(request, Size.class);
-        size.setStatus(1);
+        Size size = sizeMapper.toCreateSize(request);
         log.info("Create size code={}, name={}", size.getCode(), size.getName());
         sizeRepository.save(size);
         log.info("Size add save!");
@@ -61,8 +60,7 @@ public class SizeServiceImpl implements SizeService {
     public String update(int sizeId, SizeRequest request) {
         Size size = getSizeById(sizeId);
         if (size == null) return "Khong tim thay mau sac";
-        size = modelMapper.map(request, Size.class);
-        size.setId(sizeId);
+        sizeMapper.toUpdateSize(size, request);
         sizeRepository.save(size);
         log.info("Size updated successfully");
         return "Sua kich thuoc thanh cong";
@@ -83,7 +81,7 @@ public class SizeServiceImpl implements SizeService {
     public SizeResponse getSizeResponse(int sizeId) {
         Size size = getSizeById(sizeId);
         if (size == null) return null;
-        return modelMapper.map(size, SizeResponse.class);
+        return sizeMapper.toSizeResponse(size);
     }
 
     public Size getSizeById(int ktId) {
@@ -92,12 +90,6 @@ public class SizeServiceImpl implements SizeService {
 
     @Override
     public List<SizeResponse> getAllByStatus(int status) {
-        return sizeRepository.findAllByStatus(status).stream()
-                .map(size -> new SizeResponse(
-                        size.getId(),
-                        size.getCode(),
-                        size.getName(),
-                        size.getStatus()
-                )).collect(Collectors.toList());
+        return sizeRepository.findAllByStatus(status).stream().map(sizeMapper::toSizeResponse).toList();
     }
 }

@@ -72,8 +72,8 @@
                             <th scope="row" class="text-center align-content-center">${i.index + 1}</th>
                             <td>${item.code}</td>
                             <td>${item.productName}</td>
-                            <td>${item.size != null ? item.size : ""}</td>
-                            <td>${item.color != null ? item.color : ""}</td>
+                            <td>${item.sizeName != null ? item.sizeName : ""}</td>
+                            <td>${item.colorName != null ? item.colorName : ""}</td>
                             <td>${item.quantity}</td>
                             <td><fmt:formatNumber type="currency" value="${item.price}" pattern="##,###.##"/> đ</td>
                             <td class="text-center">

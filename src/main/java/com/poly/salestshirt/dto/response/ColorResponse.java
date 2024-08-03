@@ -4,9 +4,7 @@ package com.poly.salestshirt.dto.response;
 import lombok.*;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class ColorResponse {
     private Integer id;
     private String code;

@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-sm-3"></div>
     <div class="col-sm-6 card shadow p-4">
-        <form:form action="/admin/color/update/${colorId}" method="post" modelAttribute="colorRequest" id="form-create-ms">
+        <form:form action="/admin/color/update/${colorId}" method="post" modelAttribute="color" id="form-create-ms">
             <div class="form-group mb-3">
                 <form:label path="code" class="form-label">Mã màu sắc:</form:label>
                 <form:input id="code" class="form-control" path="code"/>

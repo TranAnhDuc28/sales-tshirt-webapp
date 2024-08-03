@@ -11,11 +11,11 @@
                 <span>${errorMessage}</span>
             </div>
         </c:if>
-        <form:form action="/admin/san-pham/${productId}/spct/update/${productDetailId}" method="post"
+        <form:form action="/admin/product/${productId}/product-detail/update/${productDetailId}" method="post"
                    modelAttribute="productDetail" id="form-create-ms">
             <div class="form-group mb-3">
-                <form:label path="maSPCT" class="form-label">Mã SPCT:</form:label>
-                <form:input id="maSPCT" class="form-control" path="code"/>
+                <form:label path="code" class="form-label">Mã SPCT:</form:label>
+                <form:input id="code" class="form-control" path="code"/>
                 <form:errors path="code" cssClass="error-message"/>
             </div>
             <div class="mb-2">
@@ -26,6 +26,7 @@
             <div class="form-group mb-3">
                 <form:label path="sizeId" class="form-label">Kích thước:</form:label>
                 <form:select id="sizeId" class="form-select" path="sizeId">
+                    <option selected hidden disabled>--</option>
                     <form:options items="${sizeListActive}" itemLabel="name" itemValue="id"/>
                 </form:select>
                 <form:errors path="sizeId" cssClass="error-message"/>
@@ -33,6 +34,7 @@
             <div class="form-group mb-3">
                 <form:label path="colorId" class="form-label">Màu sắc:</form:label>
                 <form:select id="colorId" class="form-select" path="colorId">
+                    <option selected hidden disabled>--</option>
                     <form:options items="${colorListActive}" itemLabel="name" itemValue="id"/>
                 </form:select>
                 <form:errors path="colorId" cssClass="error-message"/>

@@ -1,14 +1,9 @@
 package com.poly.salestshirt.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class ProductResponse {
     private Integer id;
     private String code;

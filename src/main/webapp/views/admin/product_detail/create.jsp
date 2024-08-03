@@ -19,6 +19,7 @@
             <div class="form-group mb-3">
                 <form:label path="sizeId" class="form-label">Kích thước:</form:label>
                 <form:select id="sizeId" class="form-select" path="sizeId">
+                    <option selected hidden disabled>--</option>
                     <form:options items="${sizeListActive}" itemLabel="name" itemValue="id"/>
                 </form:select>
                 <form:errors path="sizeId" cssClass="error-message"/>
@@ -26,7 +27,8 @@
             <div class="form-group mb-3">
                 <form:label path="colorId" class="form-label">Màu sắc:</form:label>
                 <form:select id="colorId" class="form-select" path="colorId">
-                    <form:options items="${sizeListActive}" itemLabel="name" itemValue="id"/>
+                    <option selected hidden disabled>--</option>
+                    <form:options items="${colorListActive}" itemLabel="name" itemValue="id"/>
                 </form:select>
                 <form:errors path="colorId" cssClass="error-message"/>
             </div>

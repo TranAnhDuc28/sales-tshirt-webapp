@@ -63,7 +63,7 @@ public class SizeController {
     }
 
     @PostMapping("/update/{sizeId}")
-    public String update(@Valid @ModelAttribute("sizeRequest") SizeRequest request, BindingResult result,
+    public String update(@Valid @ModelAttribute("size") SizeRequest request, BindingResult result,
                          @PathVariable int sizeId) {
         if (result.hasErrors()) {
             return "admin/size/edit";

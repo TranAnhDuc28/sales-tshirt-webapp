@@ -30,9 +30,10 @@ public class ProductDetailController {
 
     @GetMapping
     public String getAllByproductId(@RequestParam(defaultValue = "1") int pageNo,
-                                    @RequestParam(defaultValue = "5") int pageSize,
+                                    @RequestParam(defaultValue = "100") int pageSize,
                                     @PathVariable int productId, Model model) {
-        model.addAttribute("pageProductDetail", productDetailService.getAllByProductId(pageNo, pageSize, productId));
+        model.addAttribute("pageProductDetail",
+                productDetailService.getAllByProductId(pageNo, pageSize, productId));
         return "admin/product_detail/index";
     }
 

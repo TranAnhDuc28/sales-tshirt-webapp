@@ -64,7 +64,7 @@ public class ProductController {
     }
 
     @PostMapping("/update/{productId}")
-    public String update(@Valid @ModelAttribute("sp") ProductRequest request, BindingResult result, 
+    public String update(@Valid @ModelAttribute("product") ProductRequest request, BindingResult result,
                          @PathVariable int productId) {
         if (result.hasErrors()) {
             return "admin/product/edit";

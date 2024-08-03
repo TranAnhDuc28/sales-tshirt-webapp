@@ -48,7 +48,7 @@ public class ColorController {
             return "admin/color/create";
         }
         colorService.create(request);
-        return "redirect:/admin/mau-sac";
+        return "redirect:/admin/color";
     }
 
     @GetMapping("/update/{colorId}")
@@ -58,12 +58,12 @@ public class ColorController {
             redirectAttributes.addFlashAttribute("messageError", "Không tìm thấy màu sắc.");
             return "redirect:/admin/color";
         }
-        model.addAttribute("colorResponse", colorResponse);
+        model.addAttribute("color", colorResponse);
         return "admin/color/edit";
     }
 
     @PostMapping("/update/{colorId}")
-    public String update(@Valid @ModelAttribute("colorRequest") ColorRequest request, BindingResult result,
+    public String update(@Valid @ModelAttribute("color") ColorRequest request, BindingResult result,
                          @PathVariable int colorId) {
         if (result.hasErrors()) {
             return "admin/color/edit";
