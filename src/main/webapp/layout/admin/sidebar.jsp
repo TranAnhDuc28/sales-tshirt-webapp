@@ -9,11 +9,11 @@
                     Trang Chủ
                 </a>
                 <div class="sb-sidenav-menu-heading">Manager</div>
-                <a class="nav-link" href="/admin/ban-hang">
+                <a class="nav-link" href="/admin/sales">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-cash-register"></i></div>
                     Bán Hàng Tại Quầy
                 </a>
-                <a class="nav-link" href="/admin/hoa-don">
+                <a class="nav-link" href="/admin/bill">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-file-invoice"></i></div>
                     Hóa Đơn
                 </a>
@@ -26,16 +26,16 @@
                 <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
                      data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
-                        <a class="nav-link" href="/admin/san-pham">Sản Phẩm</a>
-                        <a class="nav-link" href="/admin/kich-thuoc">Kích Thước</a>
-                        <a class="nav-link" href="/admin/mau-sac">Màu Sắc</a>
+                        <a class="nav-link" href="/admin/product">Sản Phẩm</a>
+                        <a class="nav-link" href="/admin/size">Kích Thước</a>
+                        <a class="nav-link" href="/admin/color">Màu Sắc</a>
                     </nav>
                 </div>
-                <a class="nav-link" href="/admin/khach-hang">
+                <a class="nav-link" href="/admin/customer">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-user-group"></i></div>
                     Khách Hàng
                 </a>
-                <a class="nav-link" href="/admin/nhan-vien">
+                <a class="nav-link" href="/admin/staff">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-user"></i></div>
                     Nhân viên
                 </a>

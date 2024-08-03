@@ -1,9 +1,5 @@
 package com.poly.salestshirt.config;
 
-import com.poly.salestshirt.entity.NhanVien;
-import com.poly.salestshirt.repository.NhanVienRepository;
-import com.poly.salestshirt.service.NhanVienService;
-import com.poly.salestshirt.service.impl.NhanVienServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +24,4 @@ public class AppConfig {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         return modelMapper;
     }
-
-
 }

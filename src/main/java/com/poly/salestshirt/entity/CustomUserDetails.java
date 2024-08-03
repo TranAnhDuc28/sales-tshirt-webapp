@@ -23,7 +23,6 @@ public class CustomUserDetails implements UserDetails, Serializable {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(account.getRole()));
     }
-
     @Override
     public String getPassword() {
         return account.getPassword();

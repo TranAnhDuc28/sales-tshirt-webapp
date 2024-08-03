@@ -1,6 +1,6 @@
 package com.poly.salestshirt.controller.auth;
 
-import com.poly.salestshirt.model.auth.request.LoginRequest;
+import com.poly.salestshirt.dto.auth.request.LoginRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
