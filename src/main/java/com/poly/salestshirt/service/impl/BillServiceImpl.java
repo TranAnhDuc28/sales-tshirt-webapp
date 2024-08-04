@@ -6,6 +6,7 @@ import com.poly.salestshirt.entity.Staff;
 import com.poly.salestshirt.dto.request.BillRequest;
 import com.poly.salestshirt.dto.response.BillResponse;
 import com.poly.salestshirt.dto.response.common.PageResponse;
+import com.poly.salestshirt.mapper.BillMapper;
 import com.poly.salestshirt.repository.BillRepository;
 import com.poly.salestshirt.repository.CustomerRepository;
 import com.poly.salestshirt.repository.StaffRepository;
@@ -30,6 +31,7 @@ public class BillServiceImpl implements BillService {
     private final BillRepository billRepository;
     private final StaffRepository staffRepository;
     private final CustomerRepository customerRepository;
+    private final BillMapper billMapper;
 
     @Override
     public PageResponse<?> getAllByStatusAndSearchAndCreate(int pageNo, int pageSize, String keyword, Integer status, Date createAt) {
@@ -39,17 +41,7 @@ public class BillServiceImpl implements BillService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Bill> billPage = billRepository.findAllByStatusAndSearchAndDateOfPurchase(pageable, keyword, status, createAt);
 
-        List<BillResponse> billResponseList = billPage.stream().map(hd -> BillResponse.builder()
-                .id(hd.getId())
-                .staffId(hd.getStaff() != null ? hd.getStaff().getId() : null)
-                .staffName(hd.getStaff() != null ? hd.getStaff().getName() : null)
-                .customerId(hd.getCustomer() != null ? hd.getCustomer().getId() : null)
-                .customerName(hd.getCustomer() != null ? hd.getCustomer().getName() : null)
-                .phoneNumber(hd.getCustomer() != null ? hd.getCustomer().getPhoneNumber() : null)
-                .dateOfPurchase(hd.getDateOfPurchase())
-                .status(hd.getStatus())
-                .build())
-                .toList();
+        List<BillResponse> billResponseList = billPage.stream().map(billMapper::toBillResponse).toList();
 
         return PageResponse.builder()
                 .pageNo(pageNo)
@@ -63,12 +55,13 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public String create(BillRequest request) {
-        Bill bill = new Bill();
+        Bill bill = billMapper.toCreateBill(request);
 
         Optional<Staff> staffOptional = staffRepository.findById(request.getStaffId());
         if (staffOptional.isEmpty()) {
             return "Không tìm thấy nhân viên.";
         }
+
         if (request.getCustomerId() == null) {
             bill.setCustomer(null);
         } else {
@@ -80,14 +73,16 @@ public class BillServiceImpl implements BillService {
         }
 
         bill.setStaff(staffOptional.get());
-        bill.setStatus(0);
         billRepository.save(bill);
         log.info("Order add save!");
         return null;
     }
 
     @Override
-    public String update(int hdId, BillRequest request) {
+    public String update(int billId, BillRequest request) {
+        Bill bill = getHoaDonById(billId);
+        if (bill == null) return "Không tìm thấy hóa đơn.";
+        billMapper.toUpdateBill(bill, request);
 
         Optional<Staff> staffOptional = staffRepository.findById(request.getStaffId());
         if (staffOptional.isEmpty()) return "Không tìm thấy nhân viên";
@@ -98,58 +93,35 @@ public class BillServiceImpl implements BillService {
             if (customerOptional.isEmpty()) return "Không tìm thấy khách hàng";
         }
 
-        Bill bill = new Bill();
-        bill.setId(hdId);
         bill.setStaff(staffOptional.get());
         bill.setCustomer(customerOptional.orElse(null));
-        bill.setDateOfPurchase(new Date());
-        bill.setStatus(0);
         billRepository.save(bill);
         log.info("Order updated successfully");
         return null;
     }
 
     @Override
-    public String changeStatus(int hdId, int status) {
-        log.info("Order change status with id={}, status={}", hdId, status);
-        Bill bill = getHoaDonById(hdId);
+    public String changeStatus(int billId, int status) {
+        log.info("Order change status with id={}, status={}", billId, status);
+        Bill bill = getHoaDonById(billId);
         if (bill == null) return "Không tìm thấy hóa đơn cần thanh toán.";
         bill.setStatus(status);
+        bill.setDateOfPurchase(new Date());
         billRepository.save(bill);
         log.info("Order changed status successfully");
         return null;
     }
 
     @Override
-    public BillResponse getBillResponse(int hdId) {
-        Bill bill = getHoaDonById(hdId);
+    public BillResponse getBillResponse(int billId) {
+        Bill bill = getHoaDonById(billId);
         if (bill == null) return null;
-        return BillResponse.builder()
-                .id(bill.getId())
-                .staffId(bill.getStaff().getId())
-                .staffName(bill.getStaff().getName())
-                .customerId(bill.getCustomer() != null ? bill.getCustomer().getId() : null)
-                .customerName(bill.getCustomer() != null ? bill.getCustomer().getName() : null)
-                .phoneNumber(bill.getCustomer() != null ? bill.getCustomer().getPhoneNumber() : null)
-                .dateOfPurchase(bill.getDateOfPurchase())
-                .status(bill.getStatus())
-                .build();
+        return billMapper.toBillResponse(bill);
     }
 
     @Override
     public List<BillResponse> getAllByStatus(int status) {
-        return billRepository.findAllByStatus(status)
-                .stream().map(bill -> BillResponse.builder()
-                        .id(bill.getId())
-                        .staffId(bill.getStaff().getId())
-                        .staffName(bill.getStaff().getName())
-                        .customerId(bill.getCustomer() != null ? bill.getCustomer().getId() : null)
-                        .customerName(bill.getCustomer() != null ? bill.getCustomer().getName() : null)
-                        .phoneNumber(bill.getCustomer() != null ? bill.getCustomer().getPhoneNumber() : null)
-                        .dateOfPurchase(bill.getDateOfPurchase())
-                        .status(bill.getStatus())
-                        .build())
-                .collect(Collectors.toList());
+        return billRepository.findAllByStatus(status).stream().map(billMapper::toBillResponse).toList();
     }
 
     public Bill getHoaDonById(int hdId) {

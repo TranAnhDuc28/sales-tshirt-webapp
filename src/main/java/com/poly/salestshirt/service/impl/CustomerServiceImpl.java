@@ -4,6 +4,7 @@ import com.poly.salestshirt.entity.Customer;
 import com.poly.salestshirt.dto.request.CustomerRequest;
 import com.poly.salestshirt.dto.response.CustomerResponse;
 import com.poly.salestshirt.dto.response.common.PageResponse;
+import com.poly.salestshirt.mapper.CustomerMapper;
 import com.poly.salestshirt.repository.CustomerRepository;
 import com.poly.salestshirt.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final ModelMapper modelMapper;
+    private final CustomerMapper customerMapper;
     @Override
     public PageResponse<?> getAllByStatusAndSearch(int pageNo, int pageSize, String keyword, Integer status) {
         int pageNumber = 0;
@@ -32,14 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
         Page<Customer> customerPage = customerRepository.findAllBySearchAndStatus(keyword, status, pageable);
 
         List<CustomerResponse> customers = customerPage.getContent().stream()
-                .map(customer -> CustomerResponse.builder()
-                        .id(customer.getId())
-                        .code(customer.getCode())
-                        .name(customer.getName())
-                        .phoneNumber(customer.getPhoneNumber())
-                        .status(customer.getStatus())
-                        .build())
-                .toList();
+                .map(customerMapper::toCustomerResponse).toList();
 
         return PageResponse.builder()
                 .pageNo(pageNo)
@@ -53,9 +47,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public String create(CustomerRequest request) {
-        Customer customer = modelMapper.map(request, Customer.class);
-        customer.setStatus(1);
+        Customer customer = customerMapper.toCreateCustomer(request);
         log.info("Create Customer code={}, phone={}", customer.getName(), customer.getPhoneNumber());
+
         customerRepository.save(customer);
         log.info("Customer add save!");
         return "Them khach hang thanh cong";
@@ -65,8 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
     public String update(int customerId, CustomerRequest request) {
         Customer customer = getCustomerById(customerId);
         if (customer == null) return "Khong tim thay khach hang";
-        customer = modelMapper.map(request, Customer.class);
-        customer.setId(customerId);
+        customerMapper.toUpdateCustomer(customer, request);
         customerRepository.save(customer);
         log.info("Customer updated successfully");
         return "Sua khach hang thanh cong";
@@ -87,20 +80,12 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse getCustomerResponse(int customerId) {
         Customer customer = getCustomerById(customerId);
         if(customer == null) return null;
-        return modelMapper.map(customer, CustomerResponse.class);
+        return customerMapper.toCustomerResponse(customer);
     }
 
     @Override
     public List<CustomerResponse> getAllByStatus(int status) {
-        return customerRepository.findAllByStatus(status).stream()
-                .map(customer -> CustomerResponse.builder()
-                        .id(customer.getId())
-                        .code(customer.getCode())
-                        .name(customer.getName())
-                        .phoneNumber(customer.getPhoneNumber())
-                        .status(customer.getStatus())
-                        .build())
-                .toList();
+        return customerRepository.findAllByStatus(status).stream().map(customerMapper::toCustomerResponse).toList();
     }
 
     public Customer getCustomerById(int customerId) {

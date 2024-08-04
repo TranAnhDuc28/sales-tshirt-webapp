@@ -5,6 +5,7 @@ import com.poly.salestshirt.entity.Staff;
 import com.poly.salestshirt.dto.request.StaffRequest;
 import com.poly.salestshirt.dto.response.StaffResponse;
 import com.poly.salestshirt.dto.response.common.PageResponse;
+import com.poly.salestshirt.mapper.StaffMapper;
 import com.poly.salestshirt.repository.StaffRepository;
 import com.poly.salestshirt.service.StaffService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 public class StaffServiceImpl implements StaffService {
 
     private final StaffRepository staffRepository;
+    private final StaffMapper staffMapper;
 
     @Override
     public PageResponse<?> getAllByStatusAndSearch(int pageNo, int pageSize, String keyword, Integer status) {
@@ -31,7 +33,7 @@ public class StaffServiceImpl implements StaffService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Staff> staffPage = staffRepository.findAllBySearchAndStatus(keyword, status, pageable);
 
-        List<StaffResponse> staffResponses = staffPage.stream().map(this::convertToStaffResponse).toList();
+        List<StaffResponse> staffResponses = staffPage.stream().map(staffMapper::toStaffResponse).toList();
 
         return PageResponse.builder()
                 .pageNo(pageNo)
@@ -45,8 +47,7 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public String create(StaffRequest request) {
-        request.setStatus(1);
-        Staff staff = this.convertToStaff(request);
+        Staff staff = staffMapper.toCreateStaff(request);
         log.info("Create Customer ten={}, email={}", staff.getName(), staff.getEmail());
         staffRepository.save(staff);
         log.info("Staff add save!");
@@ -57,7 +58,7 @@ public class StaffServiceImpl implements StaffService {
     public String update(int staffId, StaffRequest request) {
         Staff staff = getStaffById(staffId);
         if (staff == null) return "Khong tim thay nhan vien";
-        staff = this.convertToStaff(request);
+        staffMapper.toUpdateStaff(staff, request);
         staff.setAccountId(staff.getAccountId());
         staffRepository.save(staff);
         log.info("Staff updated successfully");
@@ -79,43 +80,23 @@ public class StaffServiceImpl implements StaffService {
     public StaffResponse getStaffResponseById(int staffId) {
         Staff staff = getStaffById(staffId);
         if(staff == null) return null;
-        return convertToStaffResponse(staff);
+        return staffMapper.toStaffResponse(staff);
     }
 
     @Override
     public StaffResponse getStaffResponseByAccountId(int accountId) {
         Staff staff = staffRepository.findByAccountId(accountId);
         if(staff == null) return null;
-        return convertToStaffResponse(staff);
+        return staffMapper.toStaffResponse(staff);
     }
 
     @Override
     public List<StaffResponse> getAllByStatus(int status) {
-        return staffRepository.findAllByStatus(status).stream().map(this::convertToStaffResponse).toList();
+        return staffRepository.findAllByStatus(status).stream().map(staffMapper::toStaffResponse).toList();
     }
 
     public Staff getStaffById(int nvId) {
         return staffRepository.findById(nvId).orElse(null);
-    }
-
-
-    private StaffResponse convertToStaffResponse(Staff staff) {
-        return StaffResponse.builder()
-                .id(staff.getId())
-                .code(staff.getCode())
-                .name(staff.getName())
-                .email(staff.getEmail())
-                .status(staff.getStatus())
-                .build();
-    }
-
-    private Staff convertToStaff(StaffRequest request) {
-        Staff staff = new Staff();
-        staff.setCode(request.getCode());
-        staff.setName(request.getName());
-        staff.setEmail(request.getEmail());
-        staff.setStatus(request.getStatus());
-        return staff;
     }
 }
 

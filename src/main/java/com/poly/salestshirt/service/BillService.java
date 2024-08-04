@@ -10,8 +10,8 @@ import java.util.List;
 public interface BillService {
     PageResponse<?> getAllByStatusAndSearchAndCreate(int pageNo, int pageSize, String keyword, Integer status, Date createAt);
     String create(BillRequest request);
-    String update(int hdId, BillRequest request);
-    String changeStatus(int hdId, int status);
-    BillResponse getBillResponse(int hdId);
+    String update(int billId, BillRequest request);
+    String changeStatus(int billId, int status);
+    BillResponse getBillResponse(int billId);
     List<BillResponse> getAllByStatus(int status);
 }

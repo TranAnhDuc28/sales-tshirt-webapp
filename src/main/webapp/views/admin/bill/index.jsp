@@ -16,7 +16,7 @@
         <div class="col-6">
             <div class="input-group">
                 <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
-                    <input type="text" class="form-control" placeholder="Nhập mã hóa đơn, tên, số điện thoại"
+                    <input type="text" class="form-control" placeholder="Nhập tên, số điện thoại khách hàng"
                            name="keyword" value="${keyword}">
             </div>
         </div>

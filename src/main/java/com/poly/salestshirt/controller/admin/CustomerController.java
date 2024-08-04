@@ -53,17 +53,17 @@ public class CustomerController {
 
     @GetMapping("/update/{customerId}")
     public String viewUpdate(Model model, @PathVariable int customerId, RedirectAttributes redirectAttributes) {
-        CustomerResponse customer = customerService.getCustomerResponse(customerId);
-        if (customer == null) {
+        CustomerResponse customerResponse = customerService.getCustomerResponse(customerId);
+        if (customerResponse == null) {
             redirectAttributes.addFlashAttribute("messageError", "Không tìm thấy khách hàng.");
             return "redirect:/admin/customer";
         }
-        model.addAttribute("customer", customer);
+        model.addAttribute("customer", customerResponse);
         return "admin/customer/edit";
     }
 
     @PostMapping("/update/{customerId}")
-    public String update(@Valid @ModelAttribute("customerRequest") CustomerRequest request,
+    public String update(@Valid @ModelAttribute("customer") CustomerRequest request,
                          BindingResult result, @PathVariable int customerId) {
         if (result.hasErrors()) {
             return "admin/customer/edit";

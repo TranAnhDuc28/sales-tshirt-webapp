@@ -63,8 +63,8 @@ public class StaffController {
     }
 
     @PostMapping("/update/{staffId}")
-    public String update(@Valid @ModelAttribute("staffRequest") StaffRequest request,
-                         BindingResult result, @PathVariable int staffId) {
+    public String update(@Valid @ModelAttribute("staff") StaffRequest request, BindingResult result,
+                         @PathVariable int staffId) {
         if (result.hasErrors()) {
             return "admin/staff/edit";
         }

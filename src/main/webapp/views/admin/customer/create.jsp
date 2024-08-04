@@ -17,7 +17,7 @@
                 <form:errors path="name" cssClass="error-message"/>
             </div>
             <div class="form-group mb-3">
-                <form:label path="phone-number" class="form-label">Số điện thoại:</form:label>
+                <form:label path="phoneNumber" class="form-label">Số điện thoại:</form:label>
                 <form:input id="phone-number" class="form-control" path="phoneNumber"/>
                 <form:errors path="phoneNumber" cssClass="error-message"/>
             </div>
